@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>五甲互動藝術牆</title>
+
+<style>
+body{
+  margin:0;
+  overflow:hidden;
+  font-family:"Microsoft JhengHei";
+  background: radial-gradient(circle at center, #222, #000);
+  color:#fff;
+}
+
+/* 漂浮角色 */
+.character{
+  position:absolute;
+  width:120px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.character img{
+  width:100%;
+  border-radius:12px;
+}
+
+.character:hover{
+  transform:scale(1.2);
+  filter: drop-shadow(0 0 10px cyan);
+}
+
+/* 彈出視窗 */
+.modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#111;
+  padding:20px;
+  border-radius:15px;
+  width:80%;
+  max-width:700px;
+  text-align:center;
+}
+
+video{
+  width:100%;
+  border-radius:10px;
+}
+
+.close{
+  margin-top:10px;
+  cursor:pointer;
+  color:#0ff;
+}
+</style>
+</head>
+
+<body>
+
+<div id="wall"></div>
+
+<!-- 彈出視窗 -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <video id="videoPlayer" controls></video>
+    <div id="info"></div>
+    <div class="close" onclick="closeModal()">關閉</div>
+  </div>
+</div>
+
+<script>
+// 🎭 角色資料（已移除 description）
+const characters = [
+  {
+    name:"角色A",
+    image:"char1.png",
+    video:"char1.mp4",
+    author:"作者：郭仲威",
+  },
+  {
+    name:"角色B",
+    image:"char2.png",
+    video:"char2.mp4",
+    author:"作者：吳昕叡",
+  },
+  {
+    name:"角色C",
+    image:"char3.png",
+    video:"char3.mp4",
+    author:"作者：陳睿誠",
+  },
+  {
+    name:"角色D",
+    image:"char4.png",
+    video:"char4.mp4",
+    author:"作者：方宇騰",
+  },
+  {
+    name:"角色E",
+    image:"char5.png",
+    video:"char5.mp4",
+    author:"作者：陳育男",
+  },
+  {
+    name:"角色F",
+    image:"char6.png",
+    video:"char6.mp4",
+    author:"作者：李冠霖",
+  },
+  {
+    name:"角色G",
+    image:"char7.png",
+    video:"char7.mp4",
+    author:"作者：陳晉翔",
+  },
+  {
+    name:"角色H",
+    image:"char8.png",
+    video:"char8.mp4",
+    author:"作者：柯泓勁",
+  },
+  {
+    name:"角色I",
+    image:"char9.png",
+    video:"char9.mp4",
+    author:"作者：丁玉宣",
+  },
+  {
+    name:"角色J",
+    image:"char10.png",
+    video:"char10.mp4",
+    author:"作者：李明蓁",
+  },
+  {
+    name:"角色K",
+    image:"char11.png",
+    video:"char11.mp4",
+    author:"作者：陳家萱",
+  },
+  {
+    name:"角色L",
+    image:"char12.png",
+    video:"char12.mp4",
+    author:"作者：黃柔昀",
+  },
+  {
+    name:"角色M",
+    image:"char13.png",
+    video:"char13.mp4",
+    author:"作者：魏妘芳",
+  },
+  {
+    name:"角色N",
+    image:"char14.png",
+    video:"char14.mp4",
+    author:"作者：歐宛熏",
+  },
+  {
+    name:"角色O",
+    image:"char15.png",
+    video:"char15.mp4",
+    author:"作者：莊晶安",
+  },
+  {
+    name:"角色P",
+    image:"char16.png",
+    video:"char16.mp4",
+    author:"作者：池芷語",
+  },
+  {
+    name:"角色Q",
+    image:"char17.png",
+    video:"char17.mp4",
+    author:"作者：李恩靚",
+  },
+];
+
+const wall = document.getElementById("wall");
+
+// 建立角色
+characters.forEach((char, index)=>{
+  const div = document.createElement("div");
+  div.className = "character";
+
+  div.style.left = Math.random()*90 + "vw";
+  div.style.top = Math.random()*90 + "vh";
+
+  div.innerHTML = `<img src="${char.image}">`;
+
+  div.onclick = ()=>{
+    openModal(index);
+  };
+
+  floatAnimation(div);
+
+  wall.appendChild(div);
+});
+
+// 漂浮動畫
+function floatAnimation(el){
+  let x = Math.random()*2-1;
+  let y = Math.random()*2-1;
+
+  setInterval(()=>{
+    let left = el.offsetLeft + x;
+    let top = el.offsetTop + y;
+
+    if(left < 0 || left > window.innerWidth-120) x *= -1;
+    if(top < 0 || top > window.innerHeight-120) y *= -1;
+
+    el.style.left = left + "px";
+    el.style.top = top + "px";
+  }, 30);
+}
+
+// 開啟視窗
+function openModal(index){
+  const char = characters[index];
+
+  const modal = document.getElementById("modal");
+  const video = document.getElementById("videoPlayer");
+  const info = document.getElementById("info");
+
+  modal.style.display = "flex";
+
+  video.src = char.video;
+  video.play();
+
+  info.innerHTML = `
+    <h2>${char.name}</h2>
+    <p>${char.author}</p>
+  `;
+}
+
+// 關閉視窗
+function closeModal(){
+  const modal = document.getElementById("modal");
+  const video = document.getElementById("videoPlayer");
+
+  modal.style.display = "none";
+
+  video.pause();
+  video.currentTime = 0;
+}
+
+// ESC 關閉
+document.addEventListener("keydown", function(event) {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
+
+// 點背景關閉
+document.getElementById("modal").addEventListener("click", function(e) {
+  if (e.target.id === "modal") {
+    closeModal();
+  }
+});
+</script>
+
+</body>
+</html>
